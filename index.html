@@ -3,51 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Offline PDF Viewer</title>
+<title>PDF Viewer</title>
 <link rel="stylesheet" href="style.css">
-<script src="libs/pdf.min.js"></script>
-<script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
-</script>
 </head>
 <body>
 
-<header>
-  <h1>📖 PDF Viewer</h1>
-  <div id="toolbar">
+<div class="controls">
+    <!-- File upload -->
+    <label class="btn" for="pdfUpload">📂 Choose File</label>
     <input type="file" id="pdfUpload" accept="application/pdf">
-    <button id="prevPage">⬅️ Prev</button>
-    <span>Page <span id="pageNum">1</span> / <span id="pageCount">?</span></span>
-    <button id="nextPage">➡️ Next</button>
-    <input type="range" id="zoomSlider" min="0.5" max="2" step="0.1" value="1">
-    <button id="rotatePage">🔄 Rotate</button>
-    <button id="toggleDark">🌙 Dark</button>
-    <button id="toggleDraw">✏️ Draw</button>
-    <button id="addNote">📝 Note</button>
+
+    <!-- Built-in PDFs -->
+    <select id="pdfSelect">
+        <option value="" disabled selected>Select a PDF</option>
+    </select>
+
+    <!-- Navigation -->
+    <button id="prevPage">◀ Prev</button>
+    <button id="nextPage">Next ▶</button>
+    <input type="number" id="jumpInput" min="1" placeholder="Page #">
+    <button id="jumpBtn">Go</button>
+
+    <!-- Zoom & Rotate -->
+    <input type="range" id="zoomSlider" min="0.5" max="2.5" step="0.1" value="1.2">
+    <button id="rotatePage">⟳ Rotate</button>
+
+    <!-- Dark Mode -->
+    <button id="toggleDark">🌓 Dark</button>
+
+    <!-- Drawing -->
+    <label><input type="checkbox" id="toggleDraw"> Draw</label>
+    <button id="clearDraw">Clear</button>
+
+    <!-- Notes -->
+    <button id="addNote">Add Note</button>
+    <button id="exportNotes">Export Notes</button>
+
+    <!-- Bookmarks -->
     <button id="bookmarkPage">🔖 Bookmark</button>
-    <select id="pdfSelect"></select>
-    <div id="ttsControls">
-    <button id="readPage">🔊 Play</button>
-    <button id="pauseRead">⏸️ Pause</button>
-    <button id="stopRead">⏹️ Stop</button>
-    <button id="forwardRead">⏩ Forward</button>
-    <button id="rewindRead">⏪ Rewind</button>
-  </div>
-  </div>
-</header>
 
-<main>
-<canvas id="pdf-canvas"></canvas>
+    <!-- Dual view -->
+    <button id="toggleView">Dual View</button>
 
-  <div id="dropZone">Drop PDF here</div>
-  
-  <canvas id="pdf-canvas"></canvas>
-  <canvas id="drawCanvas"></canvas>
+    <!-- Text-to-Speech -->
+    <button id="playRead">▶ Play</button>
+    <button id="pauseRead">⏸ Pause</button>
+    <button id="stopRead">⏹ Stop</button>
+    <button id="rewindRead">⏪</button>
+    <button id="forwardRead">⏩</button>
 
-  <div id="notesPanel"></div>
-  <div id="bookmarksPanel"></div>
-</main>
+    <!-- Close PDF -->
+    <button id="closePDF">❌ Close PDF</button>
+</div>
 
+<div class="canvas-container">
+    <canvas id="pdf-canvas"></canvas>
+    <canvas id="drawCanvas"></canvas>
+    <canvas id="pdf-canvas2"></canvas>
+</div>
+
+<div id="notesPanel"></div>
+<div id="bookmarksPanel"></div>
+
+<script src="libs/pdf.min.js"></script>
+<script src="libs/pdf.worker.min.js"></script>
 <script src="viewer.js" defer></script>
 </body>
 </html>
