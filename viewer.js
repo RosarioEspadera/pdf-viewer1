@@ -223,7 +223,6 @@ const builtInPDFs = [
     });
 
     // ================== Text-to-Speech ==================
-let reading = false;
 
 // Start reading current page
 function startReading() {
