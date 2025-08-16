@@ -99,6 +99,20 @@ const builtInPDFs = [
     notesPanel.innerHTML = (notes[pageNum] || []).map(n => `<div>📝 ${n}</div>`).join('');
     notesPanel.style.display = notes[pageNum]?.length ? 'block' : 'none';
 }
+    function updateBookmarksUI() {
+    const panel = document.getElementById('bookmarksPanel');
+    if (!panel) return;
+
+    const bookmarks = JSON.parse(localStorage.getItem('pdfBookmarks') || '[]');
+    panel.innerHTML = '';
+    bookmarks.forEach(p => {
+        const div = document.createElement('div');
+        div.textContent = `🔖 Page ${p}`;
+        div.onclick = () => { pageNum = p; renderPage(pageNum); };
+        panel.appendChild(div);
+    });
+}
+
 
     // ---------------- Render Page ----------------
     function renderPage(num) {
