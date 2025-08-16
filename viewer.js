@@ -261,3 +261,4 @@ document.getElementById('playRead')?.addEventListener('click', () => {
 
 document.getElementById('pauseRead')?.addEventListener('click', pauseReading);
 document.getElementById('stopRead')?.addEventListener('click', stopReading);
+});
