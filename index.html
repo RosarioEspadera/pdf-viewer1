@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mobile PDF Viewer</title>
+<title>Offline PDF Viewer</title>
 <link rel="stylesheet" href="style.css">
 <script src="libs/pdf.min.js"></script>
-<script src="libs/pdf.worker.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
+</script>
 </head>
 <body>
 
@@ -27,19 +29,6 @@
 </header>
 
 <main>
-    <div id="pdfSelector">
-  <button data-pdf="assets/7th edition.pdf">7th edition</button>
-  <button data-pdf="assets/8th edition.pdf">8th edition</button>
-  <button data-pdf="assets/Boylestad, 7th ed.pdf">Boylestad, 7th ed</button>
-  <button data-pdf="assets/Electrical Circuit Theory and Technology by Bird [Book].pdf">Electrical Circuit Theory and Technology by Bird [Book]</button>
-  <button data-pdf="assets/Electronic design  circuits and systems-1.pdf">Electronic design  circuits and systems-1</button>
-  <button data-pdf="assets/Floyd, 7th ed.pdf">Floyd, 7th ed</button>
-  <button data-pdf="assets/Nelms, 11th ed.pdf">Nelms, 11th ed</button>
-  <button data-pdf="assets/Principles of Electronics, Mehta (1).pdf">Principles of Electronics, Mehta (1)</button>
-  <button data-pdf="assets/Sadiku, 3rd ed.pdf">Sadiku, 3rd ed</button>
-  <button data-pdf="assets/Sadiku, 5th ed.pdf">Sadiku, 5th ed</button>
-  <button data-pdf="assets/Teach Yourself Electricity And Electronics 4th Ed. by Gibilisco [Book]">Teach Yourself Electricity And Electronics 4th Ed. by Gibilisco [Book]</button>
-</div>
 <canvas id="pdf-canvas"></canvas>
 
   <div id="dropZone">Drop PDF here</div>
