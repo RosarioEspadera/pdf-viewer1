@@ -9,27 +9,46 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>📖 Cozy PDF Viewer</h1>
-    <div class="toolbar">
-      <button id="prevPage">⬅️</button>
-      <span>Page <span id="pageNum">1</span> / <span id="pageCount">?</span></span>
-      <button id="nextPage">➡️</button>
-      <input type="range" id="zoomSlider" min="0.5" max="2" step="0.1" value="1" title="Zoom">
-      <label for="pdfUpload" class="upload-btn">📁 Upload PDF</label>
-      <input type="file" id="pdfUpload" accept="application/pdf" hidden>
-    </div>
-  </header>
+<header>
+  <h1>📖 Cozy PDF Viewer</h1>
+  <div class="toolbar">
+    <button id="prevPage">⬅️</button>
+    <span>Page <span id="pageNum">1</span> / <span id="pageCount">?</span></span>
+    <button id="nextPage">➡️</button>
+    <button id="toggleView">📖 Dual View</button>
+    <input type="range" id="zoomSlider" min="0.5" max="2" step="0.1" value="1" title="Zoom">
+    <button id="rotatePage">🔄 Rotate</button>
+    <input type="number" id="jumpInput" min="1" placeholder="Go to page">
+    <button id="jumpBtn">⏩</button>
+    <label for="pdfUpload" class="upload-btn">📁 Upload PDF</label>
+    <input type="file" id="pdfUpload" accept="application/pdf" hidden>
+    <button id="toggleDark">🌙</button>
+    <button id="readPage">🔊 Read</button>
+    <button id="addNote">📝 Add Note</button>
+    <button id="exportNotes">📤 Export Notes</button>
+    <label><input type="checkbox" id="toggleDraw"> Draw</label>
+  </div>
+  <div class="mini-toolbar">
+    <button id="prevPageM">⬅️</button>
+    <button id="nextPageM">➡️</button>
+    <button id="toggleViewM">📖</button>
+  </div>
+</header>
 
-  <main>
-    <canvas id="pdf-canvas"></canvas>
-    <div id="dropZone">📂 Drop PDF here</div>
-  </main>
+<main>
+  <canvas id="pdf-canvas"></canvas>
+  <canvas id="pdf-canvas2"></canvas>
+  <canvas id="drawCanvas"></canvas>
+  <div id="dropZone">📂 Drop PDF here</div>
+  <div id="notesPanel"></div>
+  <div id="bookmarksPanel"></div>
+</main>
+
 
   <footer>
     <p>Offline-ready & Mobile-friendly PDF Viewer</p>
   </footer>
-  
+
 <script src="libs/pdf.min.js"></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
