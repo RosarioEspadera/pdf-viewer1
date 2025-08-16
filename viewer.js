@@ -143,14 +143,51 @@ document.getElementById('exportNotes').onclick = () => {
 // ---------------------------
 // Text-to-Speech
 // ---------------------------
+let utterance = null;
+let isPaused = false;
+
+// Play or resume reading
 document.getElementById('readPage').onclick = () => {
-    pdfDoc.getPage(pageNum).then(page => {
-        page.getTextContent().then(text => {
-            const content = text.items.map(i => i.str).join(' ');
-            const utter = new SpeechSynthesisUtterance(content);
-            speechSynthesis.speak(utter);
-        });
+  if (!pdfDoc) return;
+  
+  if (utterance && isPaused) {
+    // Resume if paused
+    speechSynthesis.resume();
+    isPaused = false;
+    return;
+  }
+
+  // Create a new utterance
+  pdfDoc.getPage(pageNum).then(page => {
+    page.getTextContent().then(text => {
+      const content = text.items.map(i => i.str).join(' ');
+      utterance = new SpeechSynthesisUtterance(content);
+      speechSynthesis.speak(utterance);
+      isPaused = false;
+
+      // Clear utterance when finished
+      utterance.onend = () => {
+        utterance = null;
+      };
     });
+  });
+};
+
+// Pause reading
+document.getElementById('pauseRead').onclick = () => {
+  if (utterance && !isPaused) {
+    speechSynthesis.pause();
+    isPaused = true;
+  }
+};
+
+// Stop reading completely
+document.getElementById('stopRead').onclick = () => {
+  if (utterance) {
+    speechSynthesis.cancel();
+    utterance = null;
+    isPaused = false;
+  }
 };
 
 // ---------------------------
