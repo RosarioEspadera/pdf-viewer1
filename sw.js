@@ -4,8 +4,8 @@ const FILES_TO_CACHE = [
   '/index.html',
   '/style.css',
   '/viewer.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+  '/libs/pdf.min.js',
+  '/libs/pdf.worker.min.js'
 ];
 
 self.addEventListener('install', e => {

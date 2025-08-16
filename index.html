@@ -29,6 +29,11 @@
   <footer>
     <p>Offline-ready & Mobile-friendly PDF Viewer</p>
   </footer>
+  
+<script src="libs/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
+</script>
 
   <script src="viewer.js"></script>
 </body>
