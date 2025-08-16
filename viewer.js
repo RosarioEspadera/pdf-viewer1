@@ -223,25 +223,43 @@ const builtInPDFs = [
     });
 
     // ================== Text-to-Speech ==================
-    function startReading() {
-        if (!pdfDoc) return alert("PDF not loaded!");
-        pdfDoc.getPage(pageNum).then(page => {
-            page.getTextContent().then(text => {
-                const content = text.items.map(i => i.str).join(' ');
-                if (!content) return alert("No text on this page!");
-                utter = new SpeechSynthesisUtterance(content);
-                utter.onend = () => { reading = false; };
-                speechSynthesis.speak(utter);
-                reading = true;
-            });
+    let utter = null;
+let reading = false;
+
+// Start reading current page
+function startReading() {
+    if (!pdfDoc) return alert("PDF not loaded!");
+    pdfDoc.getPage(pageNum).then(page => {
+        page.getTextContent().then(text => {
+            const content = text.items.map(i => i.str).join(' ');
+            if (!content) return alert("No text on this page!");
+            
+            // Stop any previous speech
+            speechSynthesis.cancel();
+
+            utter = new SpeechSynthesisUtterance(content);
+            utter.onend = () => { reading = false; };
+            speechSynthesis.speak(utter);
+            reading = true;
         });
+    });
+}
+
+// Pause, resume, and stop
+function pauseReading() { if (reading) speechSynthesis.pause(); }
+function resumeReading() { if (reading) speechSynthesis.resume(); }
+function stopReading() { 
+    if (reading) {
+        speechSynthesis.cancel();
+        reading = false;
     }
+}
 
-    function pauseReading() { if (reading) speechSynthesis.pause(); }
-    function resumeReading() { if (reading) speechSynthesis.resume(); }
-    function stopReading() { speechSynthesis.cancel(); reading = false; }
-
-    document.getElementById('playRead')?.addEventListener('click', resumeReading);
-    document.getElementById('pauseRead')?.addEventListener('click', pauseReading);
-    document.getElementById('stopRead')?.addEventListener('click', stopReading);
+// Button events
+document.getElementById('playRead')?.addEventListener('click', () => {
+    if (!reading) startReading(); // Start reading if not already
+    else resumeReading();          // Resume if paused
 });
+
+document.getElementById('pauseRead')?.addEventListener('click', pauseReading);
+document.getElementById('stopRead')?.addEventListener('click', stopReading);
