@@ -91,6 +91,15 @@ const builtInPDFs = [
         localStorage.removeItem('lastPage');
     });
 
+    function updateNotesUI() {
+    const notesPanel = document.getElementById('notesPanel');
+    if (!notesPanel) return;
+
+    const notes = JSON.parse(localStorage.getItem('pdfNotes') || '{}');
+    notesPanel.innerHTML = (notes[pageNum] || []).map(n => `<div>📝 ${n}</div>`).join('');
+    notesPanel.style.display = notes[pageNum]?.length ? 'block' : 'none';
+}
+
     // ---------------- Render Page ----------------
     function renderPage(num) {
         if (!pdfDoc) return;
