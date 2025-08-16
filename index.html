@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Cozy PDF Viewer</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>📖 Cozy PDF Viewer</h1>
+    <div class="toolbar">
+      <button id="prevPage">⬅️</button>
+      <span>Page <span id="pageNum">1</span> / <span id="pageCount">?</span></span>
+      <button id="nextPage">➡️</button>
+      <input type="range" id="zoomSlider" min="0.5" max="2" step="0.1" value="1" title="Zoom">
+      <label for="pdfUpload" class="upload-btn">📁 Upload PDF</label>
+      <input type="file" id="pdfUpload" accept="application/pdf" hidden>
+    </div>
+  </header>
+
+  <main>
+    <canvas id="pdf-canvas"></canvas>
+    <div id="dropZone">📂 Drop PDF here</div>
+  </main>
+
+  <footer>
+    <p>Offline-ready & Mobile-friendly PDF Viewer</p>
+  </footer>
+
+  <script src="viewer.js"></script>
+</body>
+</html>
