@@ -1,80 +1,174 @@
-body {
+/* =========================
+   General Reset
+========================= */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: #f5f5f5;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+  background-color: #f5f5f5;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.dark {
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+}
+
+/* =========================
+   Header & Toolbar
+========================= */
 header {
-  padding: 0.5rem;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 100%;
+  padding: 10px;
+  background-color: #4a90e2;
+  color: white;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+#pdfSelector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+#pdfSelector button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #4a90e2;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#pdfSelector button:hover {
+  background-color: #e0e0e0;
 }
 
 #toolbar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.3rem;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 10px;
 }
 
-canvas {
-  width: 100%;
+#toolbar button, #toolbar select, #toolbar input[type="range"] {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#toolbar button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#toolbar button:hover {
+  background-color: #357ab8;
+}
+
+/* =========================
+   PDF Canvas
+========================= */
+#pdf-canvas, #drawCanvas, #pdf-canvas2 {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  max-width: 100%;
   height: auto;
-  display: block;
-  margin: 0 auto;
-  position: relative;
 }
 
 #drawCanvas {
   position: absolute;
   top: 0;
   left: 0;
-  display: none;
+  pointer-events: none; /* Enable toggle for drawing */
 }
 
-#dropZone {
-  border: 2px dashed #aaa;
-  padding: 2rem;
-  margin: 1rem;
-  text-align: center;
-}
-
-button, input[type="range"], input[type="file"] {
-  flex: 1 1 auto;
-  min-width: 40px;
-  margin: 0.2rem;
-}
-
-#notesPanel, #bookmarksPanel {
-  margin: 0.5rem;
-  padding: 0.5rem;
-  background: #fff;
-  max-height: 150px;
+/* =========================
+   Notes Panel
+========================= */
+#notesPanel {
+  width: 90%;
+  max-width: 400px;
+  background-color: #fff9c4;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 10px;
   overflow-y: auto;
+  max-height: 150px;
 }
 
-#ttsControls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem;
-  margin: 0.5rem;
+.dark #notesPanel {
+  background-color: #555;
+  color: #f5f5f5;
 }
 
-body.dark {
-  background: #222;
-  color: #eee;
+/* =========================
+   PDF Selector / Drop Zone
+========================= */
+#dropZone {
+  width: 90%;
+  max-width: 500px;
+  height: 80px;
+  border: 2px dashed #4a90e2;
+  border-radius: 10px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: #4a90e2;
+  font-weight: bold;
 }
 
-body.dark header, body.dark #notesPanel, body.dark #bookmarksPanel {
-  background: #333;
-  color: #eee;
-}
-
-@media (max-width: 600px){
+/* =========================
+   Responsive
+========================= */
+@media screen and (max-width: 600px) {
+  header h1 {
+    font-size: 1.2rem;
+  }
   #toolbar {
     flex-direction: column;
+    gap: 4px;
   }
+  #pdfSelector {
+    flex-direction: column;
+  }
+  #notesPanel {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+/* =========================
+   Floating Elements
+========================= */
+#floatingPageNum {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
 }

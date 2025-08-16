@@ -51,6 +51,23 @@ document.getElementById('pdfUpload').addEventListener('change', e=>{
   }
 });
 
+// Load a PDF by URL
+function loadPDF(url) {
+  pdfjsLib.getDocument(url).promise.then(pdf => {
+    pdfDoc = pdf;
+    pageNum = 1;
+    renderPage(pageNum);
+  });
+}
+
+// PDF selector buttons
+document.querySelectorAll('#pdfSelector button').forEach(btn => {
+  btn.onclick = () => {
+    const url = btn.dataset.pdf;
+    loadPDF(url);
+  };
+});
+
 // --- Drag & Drop ---
 const dropZone=document.getElementById('dropZone');
 document.body.addEventListener('dragover', e=>{e.preventDefault(); dropZone.style.display='block';});
