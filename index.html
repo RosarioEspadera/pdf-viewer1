@@ -26,6 +26,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
     <button id="addNote">📝 Note</button>
     <button id="bookmarkPage">🔖 Bookmark</button>
     <select id="pdfSelect"></select>
+    <div id="ttsControls">
+    <button id="readPage">🔊 Play</button>
+    <button id="pauseRead">⏸️ Pause</button>
+    <button id="stopRead">⏹️ Stop</button>
+    <button id="forwardRead">⏩ Forward</button>
+    <button id="rewindRead">⏪ Rewind</button>
+  </div>
   </div>
 </header>
 
@@ -39,14 +46,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
 
   <div id="notesPanel"></div>
   <div id="bookmarksPanel"></div>
-
-  <div id="ttsControls">
-    <button id="readPage">🔊 Play</button>
-    <button id="pauseRead">⏸️ Pause</button>
-    <button id="stopRead">⏹️ Stop</button>
-    <button id="forwardRead">⏩ Forward</button>
-    <button id="rewindRead">⏪ Rewind</button>
-  </div>
 </main>
 
 <script src="viewer.js" defer></script>
