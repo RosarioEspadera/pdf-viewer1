@@ -3,10 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        // Before loading any PDF
-pdfjsLib.GlobalWorkerOptions.workerSrc = './libs/pdf.worker.min.js';
-    </script>
 <title>PDF Viewer</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -71,6 +67,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = './libs/pdf.worker.min.js';
 <div id="bookmarksPanel"></div>
 
 <script src="libs/pdf.min.js"></script>
+    <script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
+</script>
 <script src="libs/pdf.worker.min.js"></script>
 <script src="viewer.js" defer></script>
 </body>
