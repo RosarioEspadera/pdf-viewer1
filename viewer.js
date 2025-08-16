@@ -145,35 +145,47 @@ document.getElementById('exportNotes').onclick = () => {
 // ---------------------------
 let utterance = null;
 let isPaused = false;
+let ttsChunks = [];
+let currentChunk = 0;
+const chunkSize = 50; // number of words per chunk
 
-// Play or resume reading
-document.getElementById('readPage').onclick = () => {
+function startReading(pageNum) {
   if (!pdfDoc) return;
-  
-  if (utterance && isPaused) {
-    // Resume if paused
-    speechSynthesis.resume();
-    isPaused = false;
-    return;
-  }
 
-  // Create a new utterance
   pdfDoc.getPage(pageNum).then(page => {
     page.getTextContent().then(text => {
-      const content = text.items.map(i => i.str).join(' ');
-      utterance = new SpeechSynthesisUtterance(content);
-      speechSynthesis.speak(utterance);
-      isPaused = false;
-
-      // Clear utterance when finished
-      utterance.onend = () => {
-        utterance = null;
-      };
+      const words = text.items.map(i => i.str).join(' ').split(' ');
+      ttsChunks = [];
+      for (let i = 0; i < words.length; i += chunkSize) {
+        ttsChunks.push(words.slice(i, i + chunkSize).join(' '));
+      }
+      currentChunk = 0;
+      speakChunk(currentChunk);
     });
   });
+}
+
+function speakChunk(index) {
+  if (index >= ttsChunks.length) return;
+  utterance = new SpeechSynthesisUtterance(ttsChunks[index]);
+  utterance.onend = () => {
+    currentChunk++;
+    if (!isPaused && currentChunk < ttsChunks.length) speakChunk(currentChunk);
+  };
+  speechSynthesis.speak(utterance);
+}
+
+// Play or resume
+document.getElementById('readPage').onclick = () => {
+  if (utterance && isPaused) {
+    speechSynthesis.resume();
+    isPaused = false;
+  } else {
+    startReading(pageNum);
+  }
 };
 
-// Pause reading
+// Pause
 document.getElementById('pauseRead').onclick = () => {
   if (utterance && !isPaused) {
     speechSynthesis.pause();
@@ -181,14 +193,32 @@ document.getElementById('pauseRead').onclick = () => {
   }
 };
 
-// Stop reading completely
+// Stop
 document.getElementById('stopRead').onclick = () => {
-  if (utterance) {
+  speechSynthesis.cancel();
+  utterance = null;
+  isPaused = false;
+  currentChunk = 0;
+};
+
+// Forward (skip next chunk)
+document.getElementById('forwardRead').onclick = () => {
+  if (currentChunk < ttsChunks.length - 1) {
     speechSynthesis.cancel();
-    utterance = null;
-    isPaused = false;
+    currentChunk++;
+    speakChunk(currentChunk);
   }
 };
+
+// Rewind (go back a chunk)
+document.getElementById('rewindRead').onclick = () => {
+  if (currentChunk > 0) {
+    speechSynthesis.cancel();
+    currentChunk--;
+    speakChunk(currentChunk);
+  }
+};
+
 
 // ---------------------------
 // Dual-page view
