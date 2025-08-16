@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         scale = 1.2,
         rotation = 0,
         drawing = false,
-        dualView = false;
+        dualView = false,
+        utter = null,
+        reading = false;
 
 const builtInPDFs = [
   'assets/7th edition.pdf',
@@ -28,24 +30,26 @@ const builtInPDFs = [
   'assets/Teach Yourself Electricity And Electronics 4th Ed. by Gibilisco [Book].pdf'
 ];
 
-builtInPDFs.forEach((pdf, i) => {
-    const opt = document.createElement('option');
-    // Extract the file name from the path
-    const fileName = pdf.split('/').pop(); // e.g., "book1.pdf"
-    opt.value = i;
-    opt.textContent = fileName;
-    pdfSelect.appendChild(opt);
-});
+// Populate PDF select
+    builtInPDFs.forEach((pdf, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = pdf.split('/').pop();
+        pdfSelect.appendChild(opt);
+    });
+
     // Load selected PDF
-    pdfSelect.onchange = () => loadPDF(pdfSelect.value);
+    pdfSelect?.addEventListener('change', () => loadPDF(pdfSelect.value));
 
     // Load default PDF
     loadPDF(0);
 
-    // ================= Functions =================
+    // ---------------- Functions ----------------
 
     function loadPDF(index) {
         const url = builtInPDFs[index];
+        // Stop any reading
+        stopReading();
         pdfjsLib.getDocument(url).promise.then(pdf => {
             pdfDoc = pdf;
             pageNum = parseInt(localStorage.getItem('lastPage')) || 1;
@@ -54,10 +58,11 @@ builtInPDFs.forEach((pdf, i) => {
     }
 
     function renderPage(num) {
+        if (!pdfDoc) return;
         pdfDoc.getPage(num).then(page => {
             const viewport = page.getViewport({ scale, rotation });
-            canvas.height = viewport.height;
             canvas.width = viewport.width;
+            canvas.height = viewport.height;
             drawCanvas.width = viewport.width;
             drawCanvas.height = viewport.height;
 
@@ -68,50 +73,58 @@ builtInPDFs.forEach((pdf, i) => {
             updateNotesUI();
             updateBookmarksUI();
 
-            localStorage.setItem('lastPage', pageNum);
+            localStorage.setItem('lastPage', num);
         });
 
-        // Dual-page view
+        // Dual page view
         if (dualView && num + 1 <= pdfDoc.numPages) {
             pdfDoc.getPage(num + 1).then(page => {
                 const viewport = page.getViewport({ scale, rotation });
-                canvas2.height = viewport.height;
                 canvas2.width = viewport.width;
+                canvas2.height = viewport.height;
                 page.render({ canvasContext: canvas2.getContext('2d'), viewport });
             });
         }
     }
 
-    // ================ Navigation =================
-    document.getElementById('prevPage').onclick = () => { if (pageNum > 1) { pageNum--; renderPage(pageNum); } };
-    document.getElementById('nextPage').onclick = () => { if (pageNum < pdfDoc.numPages) { pageNum++; renderPage(pageNum); } };
-    document.getElementById('jumpBtn').onclick = () => {
+    // ---------------- Navigation ----------------
+    document.getElementById('prevPage')?.addEventListener('click', () => {
+        if (pageNum > 1) { pageNum--; renderPage(pageNum); stopReading(); }
+    });
+
+    document.getElementById('nextPage')?.addEventListener('click', () => {
+        if (pdfDoc && pageNum < pdfDoc.numPages) { pageNum++; renderPage(pageNum); stopReading(); }
+    });
+
+    document.getElementById('jumpBtn')?.addEventListener('click', () => {
         const target = parseInt(document.getElementById('jumpInput').value);
-        if (target >= 1 && target <= pdfDoc.numPages) { pageNum = target; renderPage(pageNum); }
-    };
+        if (target >= 1 && pdfDoc && target <= pdfDoc.numPages) { pageNum = target; renderPage(pageNum); stopReading(); }
+    });
 
-    // ================ Zoom & Rotate =================
-    document.getElementById('zoomSlider').oninput = e => { scale = parseFloat(e.target.value); renderPage(pageNum); };
-    document.getElementById('rotatePage').onclick = () => { rotation = (rotation + 90) % 360; renderPage(pageNum); };
+    // ---------------- Zoom & Rotate ----------------
+    document.getElementById('zoomSlider')?.addEventListener('input', e => { scale = parseFloat(e.target.value); renderPage(pageNum); });
+    document.getElementById('rotatePage')?.addEventListener('click', () => { rotation = (rotation + 90) % 360; renderPage(pageNum); });
 
-    // ================ Dark Mode =================
-    document.getElementById('toggleDark').onclick = () => document.body.classList.toggle('dark');
+    // ---------------- Dark Mode ----------------
+    document.getElementById('toggleDark')?.addEventListener('click', () => document.body.classList.toggle('dark'));
 
-    // ================ Drawing =================
-    document.getElementById('toggleDraw').onchange = e => { drawCanvas.style.display = e.target.checked ? 'block' : 'none'; };
-    drawCanvas.addEventListener('mousedown', () => drawing = true);
-    drawCanvas.addEventListener('mouseup', () => drawing = false);
-    drawCanvas.addEventListener('mousemove', e => {
+    // ---------------- Drawing ----------------
+    document.getElementById('toggleDraw')?.addEventListener('change', e => { drawCanvas.style.display = e.target.checked ? 'block' : 'none'; });
+
+    drawCanvas?.addEventListener('mousedown', () => drawing = true);
+    drawCanvas?.addEventListener('mouseup', () => drawing = false);
+    drawCanvas?.addEventListener('mousemove', e => {
         if (!drawing) return;
         drawCtx.fillStyle = 'red';
         drawCtx.beginPath();
         drawCtx.arc(e.offsetX, e.offsetY, 2, 0, Math.PI * 2);
         drawCtx.fill();
     });
+
     document.getElementById('clearDraw')?.addEventListener('click', () => drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height));
 
-    // ================ Notes =================
-    document.getElementById('addNote').onclick = () => {
+    // ---------------- Notes ----------------
+    document.getElementById('addNote')?.addEventListener('click', () => {
         const note = prompt(`Enter note for page ${pageNum}`);
         if (note) {
             const notes = JSON.parse(localStorage.getItem('pdfNotes') || '{}');
@@ -120,7 +133,7 @@ builtInPDFs.forEach((pdf, i) => {
             localStorage.setItem('pdfNotes', JSON.stringify(notes));
             updateNotesUI();
         }
-    };
+    });
 
     function updateNotesUI() {
         const notes = JSON.parse(localStorage.getItem('pdfNotes') || '{}');
@@ -137,7 +150,7 @@ builtInPDFs.forEach((pdf, i) => {
         link.click();
     });
 
-    // ================ Bookmarks =================
+    // ---------------- Bookmarks ----------------
     document.getElementById('bookmarkPage')?.addEventListener('click', () => {
         let bookmarks = JSON.parse(localStorage.getItem('pdfBookmarks') || '[]');
         if (!bookmarks.includes(pageNum)) bookmarks.push(pageNum);
@@ -153,35 +166,46 @@ builtInPDFs.forEach((pdf, i) => {
         bookmarks.forEach(p => {
             const div = document.createElement('div');
             div.textContent = `🔖 Page ${p}`;
-            div.onclick = () => { pageNum = p; renderPage(pageNum); };
+            div.onclick = () => { pageNum = p; renderPage(pageNum); stopReading(); };
             panel.appendChild(div);
         });
     }
 
-    // ================ Dual Page View =================
+    // ---------------- Dual Page View ----------------
     document.getElementById('toggleView')?.addEventListener('click', () => {
         dualView = !dualView;
         canvas2.style.display = dualView ? 'inline-block' : 'none';
         renderPage(pageNum);
     });
 
-    // ================ Text-to-Speech =================
-    let speechUtter = null;
-    document.getElementById('readPage')?.addEventListener('click', () => {
-        if (!pdfDoc) return;
+    // ---------------- Text-to-Speech ----------------
+    function startReading() {
+        if (!pdfDoc) return alert("PDF not loaded!");
         pdfDoc.getPage(pageNum).then(page => {
             page.getTextContent().then(text => {
                 const content = text.items.map(i => i.str).join(' ');
-                if (!speechUtter) speechUtter = new SpeechSynthesisUtterance();
-                speechUtter.text = content;
-                speechSynthesis.speak(speechUtter);
+                if (!content) return alert("No text on this page!");
+                utter = new SpeechSynthesisUtterance(content);
+                utter.onend = () => { reading = false; };
+                speechSynthesis.speak(utter);
+                reading = true;
             });
         });
+    }
+
+    function pauseReading() { if (reading) speechSynthesis.pause(); }
+    function resumeReading() { if (reading) speechSynthesis.resume(); }
+    function stopReading() { speechSynthesis.cancel(); reading = false; }
+
+    document.getElementById('playRead')?.addEventListener('click', startReading);
+    document.getElementById('pauseRead')?.addEventListener('click', pauseReading);
+    document.getElementById('stopRead')?.addEventListener('click', stopReading);
+
+    document.getElementById('rewindRead')?.addEventListener('click', () => {
+        if (pageNum > 1) { pageNum--; renderPage(pageNum); stopReading(); }
     });
 
-    document.getElementById('pauseRead')?.addEventListener('click', () => { speechSynthesis.pause(); });
-    document.getElementById('playRead')?.addEventListener('click', () => { speechSynthesis.resume(); });
-    document.getElementById('rewindRead')?.addEventListener('click', () => { if (speechUtter) speechUtter.text = ""; renderPage(pageNum); });
-    document.getElementById('forwardRead')?.addEventListener('click', () => { if (speechUtter) speechSynthesis.cancel(); pageNum++; if (pageNum <= pdfDoc.numPages) renderPage(pageNum); });
-
+    document.getElementById('forwardRead')?.addEventListener('click', () => {
+        if (pdfDoc && pageNum < pdfDoc.numPages) { pageNum++; renderPage(pageNum); stopReading(); }
+    });
 });
