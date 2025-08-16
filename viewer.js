@@ -4,6 +4,19 @@ const drawCanvas = document.getElementById('drawCanvas');
 const drawCtx = drawCanvas.getContext('2d');
 const notesPanel = document.getElementById('notesPanel');
 const bookmarksPanel = document.getElementById('bookmarksPanel');
+const builtInPDFs = [
+  'assets/7th edition.pdf',
+  'assets/8th edition.pdf',
+  'assets/Boylestad, 7th ed.pdf',
+  'assets/Electrical Circuit Theory and Technology by Bird [Book].pdf',
+  'assets/Electronic design  circuits and systems-1.pdf',
+  'assets/Floyd, 7th ed.pdf',
+  'assets/Nelms, 11th ed.pdf',
+  'assets/Principles of Electronics, Mehta (1).pdf',
+  'assets/Sadiku, 3rd ed.pdf',
+  'assets/Sadiku, 5th ed.pdf',
+  'assets/Teach Yourself Electricity And Electronics 4th Ed. by Gibilisco [Book].pdf'
+];
 
 let pdfDoc = null, pageNum = 1, scale = 1, rotation = 0, drawing = false;
 let utterance = null, isPaused = false, ttsChunks = [], currentChunk = 0, chunkSize = 50;
@@ -52,12 +65,13 @@ document.getElementById('pdfUpload').addEventListener('change', e=>{
 });
 
 // Load a PDF by URL
-function loadPDF(url) {
-  pdfjsLib.getDocument(url).promise.then(pdf => {
-    pdfDoc = pdf;
-    pageNum = 1;
-    renderPage(pageNum);
-  });
+function loadPDF(index){
+    const url = builtInPDFs[index];
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+        pdfDoc = pdf;
+        pageNum = 1;
+        renderPage(pageNum);
+    });
 }
 
 // PDF selector buttons
